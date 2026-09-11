@@ -1,0 +1,31 @@
+name: Telegram тест (проверка канала)
+on:
+  workflow_dispatch:
+    inputs:
+      text:
+        description: 'Текст тестового сообщения (можно не менять)'
+        required: false
+        default: '✅ Тест: бот «Отзывы Израиль» подключён к каналу. Здесь будут предупреждения об изъятиях продукции на русском.'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: Отправка тестового сообщения
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 - <<'PY'
+          import os, sys
+          sys.path.insert(0, "src")
+          import tgsend
+          token = os.environ["TELEGRAM_BOT_TOKEN"]
+          chat = os.environ["TELEGRAM_CHAT_ID"]
+          tgsend.deliver(token, chat, """${{ github.event.inputs.text }}""", None, dry=False)
+          print("OK — сообщение доставлено в канал")
+          PY
