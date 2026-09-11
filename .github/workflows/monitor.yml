@@ -42,7 +42,7 @@ jobs:
 
   pages:
     needs: check
-    if: needs.check.outputs.changed == 'yes'
+    if: needs.check.outputs.changed == 'yes' || github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
