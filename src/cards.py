@@ -26,7 +26,7 @@ def _badge_list(c):
 
 def telegram_text(c: dict, site_url: str = "") -> str:
     icon, _, _ = _style(c["category_ru"])
-    head = "👶❗ ОТЗЫВ ДЕТСКОГО ПИТАНИЯ (Израиль)" if c["baby"] else f"{icon} ОТЗЫВ ПРОДУКТА (Израиль)"
+    head = "👶❗ ИЗЪЯТИЕ ДЕТСКОГО ПИТАНИЯ — Recall (Израиль)" if c["baby"] else f"{icon} ИЗЪЯТИЕ ПРОДУКТА — Recall (Израиль)"
     lines = [f"<b>{head}</b>", ""]
     if c.get("product") != "— (в заголовке не назван)":
         lines.append(f"📦 <b>Продукт:</b> {c['product']}")
@@ -60,9 +60,14 @@ def site_html(c: dict, site_url_base: str = "") -> str:
     badges = "".join(
         f'<span style="background:{color};color:#fff;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;">{b}</span>'
         for b in _badge_list(c)) or f'<span style="background:{color};color:#fff;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;">ОТЗЫВ</span>'
-    # Медиа третьих лиц не используем принципиально: только наша эмодзи-иконка категории.
-    photo = (f'<div style="height:130px;border-radius:12px;background:{bg};display:flex;align-items:center;'
-             f'justify-content:center;font-size:60px;border:1px dashed #cbd5e1;">{icon}</div>')
+    # Фото — только если есть прямая ссылка на статью источника (og:image, с подписью автора фото).
+    if c.get("photo_url"):
+        photo = (f'<img src="{c["photo_url"]}" alt="Фото продукта" loading="lazy" '
+                 'style="max-width:100%;max-height:320px;border-radius:12px;border:1px solid #e2e7ec;">'
+                 f'<div style="font-size:12px;color:#5a6b7c;margin-top:4px;">Фото: {c.get("source_ru", c["source"])}</div>')
+    else:
+        photo = (f'<div style="height:130px;border-radius:12px;background:{bg};display:flex;align-items:center;'
+                 f'justify-content:center;font-size:60px;border:1px dashed #cbd5e1;">{icon}</div>')
     data_cells = []
     if c.get("barcodes"):
         data_cells.append(f'<div style="flex:1;min-width:200px;background:{bg};border-radius:10px;padding:12px;">'

@@ -46,11 +46,11 @@ def generate(cards: list[dict], site_url_base: str = ""):
                 os.path.join(SITE_DIR, "otzyvy-widget.js"))
     idx = f"""<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Отзывы Израиль — изъятия продукции на русском</title>
+<title>Изъятия продуктов в Израиле — Recall на русском</title>
 <meta name="description" content="Все отзывы (изъятия) продуктов в Израиле на русском языке: поиск по продукту, партии, даты, причины. Обновляется автоматически каждые 20 минут.">
 </head><body style="margin:0;background:#f1f4f8;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#111c2b;">
 <div style="max-width:760px;margin:0 auto;padding:24px 14px 40px;">
-<h1 style="font-size:26px;margin:0 0 4px;">🚨 Отзывы Израиль</h1>
+<h1 style="font-size:26px;margin:0 0 4px;">🚨 Изъятия продуктов в Израиле — Recall RU</h1>
 <p style="color:#3a4a5a;margin:4px 0 14px;line-height:1.5;">Все изъятия продукции — на русском, автоматически из официальных источников.
 Всего в базе: <b>{len(cards)}</b> (детских: <b>{n_baby}</b>). Обновление каждые 20 минут.</p>
 <div style="background:#fff;border:1px solid #e2e7ec;border-radius:14px;padding:14px;margin-bottom:14px;">

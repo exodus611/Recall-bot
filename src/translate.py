@@ -10,6 +10,7 @@ SOURCES_RU = {
     "ישראל היום": "Исраэль ха-йом (новости)",
     "ice": "ICE (новости)",
     "haipo.co.il": "Haipo (предупреждения о кошерности)",
+    "nws.report": "NWS Report (иврит)",
     "Ynet Search": "Ynet (новости)",
     "emess.co.il": "emess.co.il",
 }
@@ -59,7 +60,7 @@ def build_card(item: dict) -> dict:
     brands = ", ".join(p["brands"]) if p["brands"] else "—"
     from datetime import datetime
     pub = datetime.fromisoformat(item["published"]).strftime("%d.%m.%Y")
-    title_ru = f"Отзыв: {product} — {reason}" if product != "— (в заголовке не назван)" else f"Отзыв продукта — {reason}"
+    title_ru = f"Изъятие: {product} — {reason}" if product != "— (в заголовке не назван)" else f"Отзыв продукта — {reason}"
     return {
         **item,
         "title_ru": title_ru,

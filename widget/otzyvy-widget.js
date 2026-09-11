@@ -21,9 +21,9 @@
   function el(t, st, tx) { var e = document.createElement(t); e.style.cssText = st; if (tx) e.textContent = tx; return e; }
 
   var box = el('div', 'background:#fff;border:2px solid #1d4ed8;border-radius:14px;padding:16px;box-sizing:border-box;');
-  box.appendChild(el('div', 'font-size:18px;font-weight:700;margin-bottom:4px;', '🚨 Проверьте продукт на отзыв'));
+  box.appendChild(el('div', 'font-size:18px;font-weight:700;margin-bottom:4px;', '🚨 Проверьте продукт на изъятие (Recall)'));
   box.appendChild(el('div', 'font-size:13px;color:#5a6b7c;margin-bottom:10px;',
-    'Введите название или штрих-код с упаковки. База отзывов Израиля на русском, обновляется автоматически.'));
+    'Введите название или штрих-код с упаковки. База изъятий продукции в Израиле на русском, обновляется автоматически.'));
   var input = el('input', 'width:100%;box-sizing:border-box;font-size:16px;padding:10px 12px;border:2px solid #cbd5e1;border-radius:10px;');
   input.type = 'search';
   input.placeholder = 'например: нутрилон, тхина, 7290019056096';
