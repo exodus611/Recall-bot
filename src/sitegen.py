@@ -40,6 +40,10 @@ def generate(cards: list[dict], site_url_base: str = ""):
     n_baby = sum(1 for d in data if d["baby"])
     with open(os.path.join(SITE_DIR, "otzyvy.json"), "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False)
+    # копия скрипта виджета в сайт (чтобы страницы портала грузили его отсюда)
+    import shutil
+    shutil.copy(os.path.join(os.path.dirname(__file__), "..", "widget", "otzyvy-widget.js"),
+                os.path.join(SITE_DIR, "otzyvy-widget.js"))
     idx = f"""<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Отзывы Израиль — изъятия продукции на русском</title>
