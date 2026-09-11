@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Виджет «Проверь продукт» — как он будет выглядеть на вашем сайте</title></head>
+<body style="margin:0;background:#eef1f5;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#111c2b;padding:24px 14px;">
+<div style="max-width:720px;margin:0 auto;">
+<h1 style="font-size:22px;">🧩 Виджет «Проверь продукт» — демо на живых данных</h1>
+<p style="color:#5a6b7c;font-size:14px;line-height:1.6;">Так блок будет выглядеть на любой странице вашего сайта (строка кода — в README).
+Введите название («тхина», «кукуруза») или часть штрих-кода (например, 7290019056096) — поиск работает.</p>
+<div id="otzyvy-widget"></div>
+<p style="color:#5a6b7c;font-size:12.5px;">В реальной вставке данные грузятся из otzyvy.json (обновляется ботом автоматически). Здесь они вшиты для демонстрации.</p>
+</div>
+<script>
+var DATA = [{"t": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "f": "zVNNE5fbVl1X2lxZEppTEpLRFlaSEcyaGhsdDFYU3JwNm8yS3J3SUEy-oc-5.html", "cat": "не определена", "d": "11.09.2026", "b": "📦", "baby": false, "r": "смотрите оригинал объявления (типовая причина не распознана)", "id": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1HZGlRNVVWSks5Y2o2WnRJakFIYVNoSU5hMFlCd1R5RDJPX3hVRl8yMGNBczVNNE5fbVl1X2lxZEppTEpLRFlaSEcyaGhsdDFYU3JwNm8yS3J3SUEy?oc=5", "title": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "file": "zVNNE5fbVl1X2lxZEppTEpLRFlaSEcyaGhsdDFYU3JwNm8yS3J3SUEy-oc-5.html", "date": "11.09.2026", "category": "не определена", "reason": "смотрите оригинал объявления (типовая причина не распознана)", "product": "— (в заголовке не назван)", "brands": "Shufersal («Шуферсаль»)", "barcodes": [], "batches": [], "dates": [], "source": "Ynet (новости)"}, {"t": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "f": "dHMtc0Z0a2tLM0FPLXhaWWhocncwSFVZMnlabXVMd1lLcGNQUEtYdEE-oc-5.html", "cat": "детское питание", "d": "11.09.2026", "b": "👶", "baby": true, "r": "смотрите оригинал объявления (типовая причина не распознана)", "id": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9WWUtFeXFNR0hVaXk2djJzQUJ2RXg0d3FLM2QxSGVWQ3UzN1d5LTdtVk1xQmJZdHMtc0Z0a2tLM0FPLXhaWWhocncwSFVZMnlabXVMd1lLcGNQUEtYdEE?oc=5", "title": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "file": "dHMtc0Z0a2tLM0FPLXhaWWhocncwSFVZMnlabXVMd1lLcGNQUEtYdEE-oc-5.html", "date": "11.09.2026", "category": "детское питание", "reason": "смотрите оригинал объявления (типовая причина не распознана)", "product": "— (в заголовке не назван)", "brands": "Nutrilon («Нутрилон»)", "barcodes": [], "batches": [], "dates": [], "source": "Ynet (новости)"}, {"t": "Отзыв продукта — сальмонелла", "f": "TRlOFh4WXAzcTdxZmxKc0pNZUlWSW05cDJfQVQtNlpTXy1sdkdyRXFy-oc-5.html", "cat": "не определена", "d": "11.09.2026", "b": "📦", "baby": false, "r": "сальмонелла", "id": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBaeU42dWdhTFZUNHdYVS1yYTBQWHZqeXd2Rms0Q1pnLVNSUlNvMG5lTk1XaTRlOFh4WXAzcTdxZmxKc0pNZUlWSW05cDJfQVQtNlpTXy1sdkdyRXFy?oc=5", "title": "Отзыв продукта — сальмонелла", "file": "TRlOFh4WXAzcTdxZmxKc0pNZUlWSW05cDJfQVQtNlpTXy1sdkdyRXFy-oc-5.html", "date": "11.09.2026", "category": "не определена", "reason": "сальмонелла", "product": "— (в заголовке не назван)", "brands": "—", "barcodes": [], "batches": [], "dates": [], "source": "Ynet (новости)"}, {"t": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "f": "2pYUmhqeXR0djRGdGJjZ3BueGtuZm82bi1Tcm9QWF9hdEhyaEpUWlJV-oc-5.html", "cat": "детское питание", "d": "11.09.2026", "b": "👶", "baby": true, "r": "смотрите оригинал объявления (типовая причина не распознана)", "id": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE1QM2UxbzBMWjRQdUNOTDA4Wmp5OGU4YUVkcGZjbVlPakhYSVZPQ2FOSjVScWh2Q2pYUmhqeXR0djRGdGJjZ3BueGtuZm82bi1Tcm9QWF9hdEhyaEpUWlJV?oc=5", "title": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "file": "2pYUmhqeXR0djRGdGJjZ3BueGtuZm82bi1Tcm9QWF9hdEhyaEpUWlJV-oc-5.html", "date": "11.09.2026", "category": "детское питание", "reason": "смотрите оригинал объявления (типовая причина не распознана)", "product": "— (в заголовке не назван)", "brands": "Nutrilon («Нутрилон»)", "barcodes": [], "batches": [], "dates": [], "source": "Ynet (новости)"}, {"t": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "f": "U0lzWVJoQVE4amtZeFQ4V2FfeTlxZDdha1Z6VU5OZWZ2bEhMUVZ2M3M-oc-5.html", "cat": "не определена", "d": "11.09.2026", "b": "📦", "baby": false, "r": "смотрите оригинал объявления (типовая причина не распознана)", "id": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1tVGVLcFVsc1dLMXJMQ2ozMGZJUUstMG1MSk84a0ljYllOcFBmWmdWM1IzRVBxX3RLd0diXzk2U0lzWVJoQVE4amtZeFQ4V2FfeTlxZDdha1Z6VU5OZWZ2bEhMUVZ2M3M?oc=5", "title": "Отзыв продукта — смотрите оригинал объявления (типовая причина не распознана)", "file": "U0lzWVJoQVE4amtZeFQ4V2FfeTlxZDdha1Z6VU5OZWZ2bEhMUVZ2M3M-oc-5.html", "date": "11.09.2026", "category": "не определена", "reason": "смотрите оригинал объявления (типовая причина не распознана)", "product": "— (в заголовке не назван)", "brands": "—", "barcodes": [], "batches": [], "dates": [], "source": "Ynet (новости)"}, {"t": "Отзыв продукта — плесень", "f": "jg0VnFSSzdGQ1F6OFprb3lPeloyZklnQXIxc0ZRMHZBNGVUcXNWRmRo-oc-5.html", "cat": "не определена", "d": "11.09.2026", "b": "📦", "baby": false, "r": "плесень", "id": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE54X3QzLXFYWFNtaWR5RmdvSThZUkcyTFZyaGlKM29zZlI1Y2gxalkwVDZxMjg0VnFSSzdGQ1F6OFprb3lPeloyZklnQXIxc0ZRMHZBNGVUcXNWRmRo?oc=5", "title": "Отзыв продукта — плесень", "file": "jg0VnFSSzdGQ1F6OFprb3lPeloyZklnQXIxc0ZRMHZBNGVUcXNWRmRo-oc-5.html", "date": "11.09.2026", "category": "не определена", "reason": "плесень", "product": "— (в заголовке не назван)", "brands": "—", "barcodes": [], "batches": [], "dates": [], "source": "Ynet (новости)"}];
+(function(){
+  var host=document.getElementById('otzyvy-widget');
+  host.style.cssText='max-width:680px;margin:18px 0;';
+  function el(t,st,tx){var e=document.createElement(t);e.style.cssText=st;if(tx)e.textContent=tx;return e;}
+  var box=el('div','background:#fff;border:2px solid #1d4ed8;border-radius:14px;padding:16px;box-sizing:border-box;');
+  box.appendChild(el('div','font-size:18px;font-weight:700;margin-bottom:4px;','🚨 Проверьте продукт на отзыв'));
+  box.appendChild(el('div','font-size:13px;color:#5a6b7c;margin-bottom:10px;','Введите название или штрих-код с упаковки. База отзывов Израиля на русском.'));
+  var input=el('input','width:100%;box-sizing:border-box;font-size:16px;padding:10px 12px;border:2px solid #cbd5e1;border-radius:10px;');
+  input.type='search';input.placeholder='например: нутрилон, тхина, 7290019056096';
+  box.appendChild(input);
+  var out=el('div','margin-top:10px;');box.appendChild(out);
+  box.appendChild(el('div','font-size:12px;color:#5a6b7c;margin-top:8px;','В базе отзывов: <b>'+DATA.length+'</b> (демо-выборка)'));
+  host.appendChild(box);
+  input.addEventListener('input',function(){
+    var q=input.value.toLowerCase().trim();
+    if(!q){out.innerHTML='';return;}
+    var hits=DATA.filter(function(c){
+      var hay=(c.title+' '+c.product+' '+c.brands+' '+c.reason).toLowerCase();
+      if(hay.indexOf(q)>=0)return true;
+      var d=q.replace(/\D/g,'');
+      if(d.length>=8){for(var i=0;i<c.barcodes.length;i++)if(c.barcodes[i].indexOf(d)>=0)return true;}
+      return false;
+    }).slice(0,8);
+    if(!hits.length){out.innerHTML='<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:10px 12px;font-size:14px;">✅ По запросу «'+q+'» отзывов в базе нет.</div>';return;}
+    var h='';
+    hits.forEach(function(c){
+      h+='<div style="border-bottom:1px solid #e8edf2;padding:8px 2px;font-size:14px;">'+(c.baby?'👶 ':'🚨 ')+'<b>'+c.title+'</b>'
+      +'<div style="color:#5a6b7c;font-size:12.5px;margin-top:2px;">'+c.reason+' · '+c.date+' · '+c.source+'</div></div>';
+    });
+    out.innerHTML='<div style="background:#fff1f0;border:1px solid #fca5a5;border-radius:10px;padding:6px 12px;">'+h+'</div>';
+  });
+})();
+</script></body></html>
