@@ -1,0 +1,34 @@
+name: Gemini проверка ключа
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Тест grounding-поиска
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import sys, os
+          sys.path.insert(0, "src")
+          import gemini_search
+          key = os.environ.get("GEMINI_API_KEY", "")
+          if not key:
+              print("СЕКРЕТ GEMINI_API_KEY НЕ НАЙДЕН — добавьте его в Settings → Secrets")
+              sys.exit(1)
+          urls = gemini_search.search_urls("ריקול טחינת הנסיך סלמונלה")
+          print("Найдено URL:", len(urls))
+          for u in urls[:5]:
+              print(" -", u[:100])
+          if not urls:
+              print("Ключ есть, но поиск не вернул результаты — см. текст ошибки выше")
+              sys.exit(1)
+          print("✅ КЛЮЧ РАБОТАЕТ")
+          PY

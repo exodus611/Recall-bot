@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """Поиск прямой URL статьи через Gemini (grounding with Google Search).
-Нужен только GEMINI_API_KEY в секретах. Без ключа/при ошибке — тихо пропускаем,
-бот продолжает работать штатно. ВАЖНО: берём URL только из реальных результатов
-поиска (groundingChunks), модель ничего не выдумывает."""
-import os, re, requests
+Только стандартная библиотека (urllib) — requirements не расширяяем!
+Нужен GEMINI_API_KEY в секретах. Без ключа/при ошибке — тихо [], бот работает штатно.
+ВАЖНО: берём URL только из реальных результатов поиска (groundingChunks)."""
+import os, re, json, urllib.request, urllib.parse
 
-NEWS_OK = re.compile(r"(ynet|walla|israelhayom|מעריב|maariv|ice\.co\.il|kipa|nws\.report|gov\.il|news\.co\.il|13tv|now14|kan|1news|mako|calcalist|globes|jdn|srugy|bhol|ch10|0404|israelnationalnews|lada\.net|cursorinfo|vesty)", re.I)
+NEWS_OK = re.compile(r"(ynet|walla|israelhayom|מעריב|maariv|ice\.co\.il|kipa|nws\.report|gov\.il|news\.co\.il|13tv|now14|kan|1news|mako|calcalist|globes|jdn|srugy|bhol|0404|israelnationalnews|lada\.net|cursorinfo|vesty)", re.I)
 BAD = re.compile(r"(google\.|youtube|facebook|twitter|x\.com|t\.me|instagram|tiktok|wikipedia)", re.I)
-
 MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"]
 
 def _key() -> str:
@@ -18,21 +17,18 @@ def search_urls(query: str, timeout: int = 45) -> list:
     key = _key()
     if not key:
         return []
+    body = json.dumps({
+        "contents": [{"parts": [{"text": query}]}],
+        "tools": [{"google_search": {}}],
+    }).encode("utf-8")
     for model in MODELS:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={urllib.parse.quote(key)}"
         try:
-            r = requests.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
-                json={
-                    "contents": [{"parts": [{"text": query}]}],
-                    "tools": [{"google_search": {}}],
-                },
-                headers={"Content-Type": "application/json"},
-                timeout=timeout,
-            )
-            if r.status_code != 200:
-                continue  # модель недоступна — пробуем следующую
-            chunks = ((r.json().get("candidates") or [{}])[0]
-                      .get("groundingMetadata", {}).get("groundingChunks", []))
+            req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            cand = (data.get("candidates") or [{}])[0]
+            chunks = cand.get("groundingMetadata", {}).get("groundingChunks", []) or []
             urls = []
             for ch in chunks:
                 u = (ch.get("web") or {}).get("uri") or ""
