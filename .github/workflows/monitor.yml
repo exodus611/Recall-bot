@@ -24,6 +24,7 @@ jobs:
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
           HEALTHCHECK_URL: ${{ secrets.HEALTHCHECK_URL }}
           GOOGLE_CSE_KEY: ${{ secrets.GOOGLE_CSE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GOOGLE_CSE_CX: ${{ secrets.GOOGLE_CSE_CX }}
         run: python src/monitor.py
       - name: Коммит базы и каталога

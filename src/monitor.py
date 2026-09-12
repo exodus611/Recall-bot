@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sources, ynet, translate, storage, tgsend, sitegen, cse
 from reader import read_via_jina, strip_md
 from extract import analyze
+import gemini_search
 from yahoo_enrich import enrich
 from cards import telegram_text
 
@@ -80,7 +81,7 @@ def main():
         # --- схематичный разбор статьи (всегда, даже без ключей CSE) ---
         read_url = c["url"]
         if "news.google.com" in read_url:
-            read_url = cse.resolve(c["he_title"]) or ""
+            read_url = cse.resolve(c["he_title"]) or gemini_search.resolve_article(c["he_title"]) or ""
         if read_url:
             _, text = read_via_jina(read_url)
             if text:
