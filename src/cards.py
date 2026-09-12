@@ -28,7 +28,7 @@ def telegram_text(c: dict, site_url: str = "") -> str:
     icon, _, _ = _style(c["category_ru"])
     head = "👶❗ ИЗЪЯТИЕ ДЕТСКОГО ПИТАНИЯ — Recall (Израиль)" if c["baby"] else f"{icon} ИЗЪЯТИЕ ПРОДУКТА — Recall (Израиль)"
     lines = [f"<b>{head}</b>", ""]
-    if c.get("product") != "— (в заголовке не назван)":
+    if c.get("product") and c["product"] != "—":
         lines.append(f"📦 <b>Продукт:</b> {c['product']}")
     if c["brands"] != "—":
         lines.append(f"🏷 <b>Бренд:</b> {c['brands']}")
