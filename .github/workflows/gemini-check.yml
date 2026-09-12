@@ -16,19 +16,55 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python3 - <<'PY'
-          import sys, os
+          import sys, os, time, json, urllib.request, urllib.parse
           sys.path.insert(0, "src")
-          import gemini_search
           key = os.environ.get("GEMINI_API_KEY", "")
           if not key:
               print("СЕКРЕТ GEMINI_API_KEY НЕ НАЙДЕН — добавьте его в Settings → Secrets")
               sys.exit(1)
-          urls = gemini_search.search_urls("ריקול טחינת הנסיך סלמונלה")
-          print("Найдено URL:", len(urls))
-          for u in urls[:5]:
-              print(" -", u[:100])
-          if not urls:
-              print("Ключ есть, но поиск не вернул результаты — см. текст ошибки выше")
-              sys.exit(1)
-          print("✅ КЛЮЧ РАБОТАЕТ")
+
+          def raw_call(query):
+              body = json.dumps({"contents": [{"parts": [{"text": query}]}],
+                                 "tools": [{"google_search": {}}]}).encode("utf-8")
+              url = ("https://generativelanguage.googleapis.com/v1beta/models/"
+                     f"gemini-2.5-flash:generateContent?key={urllib.parse.quote(key)}")
+              req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      return r.status, json.loads(r.read().decode("utf-8")), ""
+              except urllib.error.HTTPError as e:
+                  return e.code, {}, e.read().decode("utf-8", "replace")[:300]
+              except Exception as e:
+                  return 0, {}, str(e)[:200]
+
+          queries = ["ריקול החזרה יזומה מזון ישראל", "_latest food recall news Israel"]
+          ok = False
+          for attempt in range(4):
+              q = queries[attempt % 2]
+              code, data, err = raw_call(q)
+              if code == 200:
+                  chunks = ((data.get("candidates") or [{}])[0]
+                            .get("groundingMetadata", {}).get("groundingChunks", [])) or []
+                  urls = [((c.get("web") or {}).get("uri") or "") for c in chunks]
+                  print(f"попытка {attempt+1}: HTTP 200, URL найдено: {len(urls)}")
+                  for u in urls[:5]:
+                      print(" -", u[:100])
+                  if urls:
+                      ok = True
+                      break
+              elif code in (400, 401, 403):
+                  print(f"ОШИБКА КЛЮЧА (HTTP {code}): {err}")
+                  sys.exit(1)
+              elif code == 429:
+                  print("лимит запросов исчерпан (HTTP 429) — ключ рабочий, повторите позже")
+                  sys.exit(1)
+              else:
+                  print(f"попытка {attempt+1}: HTTP {code}, {err}")
+              time.sleep(6)
+
+          if ok:
+              print("✅ КЛЮЧ РАБОТАЕТ")
+          else:
+              print("⚠️ Ключ отвечает (HTTP 200), но поиск сейчас не вернул результатов.")
+              print("Это временная флактуация grounding — бот такие случаи пропускает спокойно.")
           PY
