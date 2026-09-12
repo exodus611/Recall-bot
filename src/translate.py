@@ -61,7 +61,9 @@ def build_card(item: dict) -> dict:
     brands = item.get("brands") if item.get("brands") not in (None, "", "—") else (", ".join(p["brands"]) if p["brands"] else "")
     category = item.get("category_ru") if item.get("category_ru") not in (None, "", "не определена") else p.get("category_ru")
     baby = bool(item.get("baby")) or bool(p.get("baby"))
-    title = item.get("title_ru") if (item.get("title_ru") and "Отзыв" not in item.get("title_ru")) else ""
+    title = item.get("title_ru") or ""
+    if "смотрите оригинал" in title or "Отзыв" in title:
+        title = ""
     if not title:
         if product:
             title = f"Изъятие: {product} — {reason}" if reason else f"Изъятие: {product}"
