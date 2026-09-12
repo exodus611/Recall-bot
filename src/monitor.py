@@ -6,6 +6,8 @@ import sys, os, time, argparse, re, urllib.request
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import sources, ynet, translate, storage, tgsend, sitegen, cse
+from reader import read_via_jina, strip_md
+from extract import analyze
 from yahoo_enrich import enrich
 from cards import telegram_text
 
@@ -75,6 +77,29 @@ def main():
                 c["source_ru"] = translate.src_ru(match["source"])
         e = enrich(c["url"])
         c.update(photo_url=e["photo_url"], batches=e["batches"][:6], dates=e["dates"], barcodes=e.get("barcodes", []), maker=e.get("maker"))
+        # --- схематичный разбор статьи (всегда, даже без ключей CSE) ---
+        read_url = c["url"]
+        if "news.google.com" in read_url:
+            read_url = cse.resolve(c["he_title"]) or ""
+        if read_url:
+            _, text = read_via_jina(read_url)
+            if text:
+                d = analyze(strip_md(text))
+                if d.get("reason_ru") and not c["guessed"]:
+                    c["reason_ru"] = d["reason_ru"]; c["guessed"] = True
+                if d.get("category_ru") and (c["category_ru"] == "не определена"):
+                    c["category_ru"] = d["category_ru"]; c["baby"] = c["baby"] or d.get("baby", False)
+                if d.get("barcode"):
+                    c["barcodes"] = sorted(set(c.get("barcodes", []) + d["barcode"]))[:8]
+                if d.get("exp"):
+                    c["dates"] = (c.get("dates", []) + [x for x in d["exp"] if x not in c.get("dates", [])])[:8]
+                if d.get("maker") and (not c.get("maker") or c["maker"] in (None, "—")):
+                    c["maker"] = d["maker"]
+                if d.get("brand") and c["brands"] in (None, "—"):
+                    c["brands"] = d["brand"]
+                if d.get("product") and c["product"] == "— (в заголовке не назван)":
+                    c["product"] = d["product"]
+                    c["title_ru"] = f"Изъятие: {d['product']} — {c['reason_ru']}" if c.get("reason_ru") else c["title_ru"]
         cards.append(c)
 
     if args.bootstrap and not db.get("bootstrapped"):

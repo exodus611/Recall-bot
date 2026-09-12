@@ -32,10 +32,10 @@ def telegram_text(c: dict, site_url: str = "") -> str:
         lines.append(f"📦 <b>Продукт:</b> {c['product']}")
     if c["brands"] != "—":
         lines.append(f"🏷 <b>Бренд:</b> {c['brands']}")
-    lines += [
-        f"⚠️ <b>Причина:</b> {c['reason_ru']}",
-        f"🗂 <b>Категория:</b> {c['category_ru']}",
-    ]
+    if c.get("reason_ru"):
+        lines.append(f"⚠️ <b>Причина:</b> {c['reason_ru']}")
+    if c.get("category_ru") and c["category_ru"] != "не определена":
+        lines.append(f"🗂 <b>Категория:</b> {c['category_ru']}")
     if c.get("barcodes"):
         lines.append("🔖 <b>Штрих-код (баркод):</b> " + ", ".join(c["barcodes"]))
     if c.get("batches"):
@@ -57,6 +57,9 @@ def telegram_text(c: dict, site_url: str = "") -> str:
 
 def site_html(c: dict, site_url_base: str = "") -> str:
     icon, color, bg = _style(c["category_ru"])
+    reason_line = f'<p style="margin:6px 0;">⚠️ <b>Причина изъятия:</b> {c["reason_ru"]}</p>' if c.get("reason_ru") else ""
+    cat_line = f'<p style="margin:6px 0;">🗂 <b>Категория:</b> {c["category_ru"]}</p>' if c.get("category_ru") and c["category_ru"] != "не определена" else ""
+    brand_line = f'<p style="margin:6px 0;">🏷 <b>Бренд:</b> {c["brands"]}</p>' if c.get("brands") and c["brands"] != "—" else ""
     badges = "".join(
         f'<span style="background:{color};color:#fff;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;">{b}</span>'
         for b in _badge_list(c)) or f'<span style="background:{color};color:#fff;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;">ОТЗЫВ</span>'
@@ -97,8 +100,7 @@ def site_html(c: dict, site_url_base: str = "") -> str:
 <div style="text-align:center;margin-bottom:14px;">{photo}</div>
 {batches}{maker_line}
 <div style="margin-top:14px;font-size:16px;line-height:1.7;">
-<p style="margin:6px 0;">⚠️ <b>Причина отзыва:</b> {c['reason_ru']}</p>
-<p style="margin:6px 0;">🗂 <b>Категория:</b> {c['category_ru']} &nbsp;·&nbsp; 🏷 <b>Бренд:</b> {c['brands']}</p>
+{reason_line}{cat_line}{brand_line}
 <div style="background:{bg};border-radius:10px;padding:12px 14px;margin-top:10px;">
 <b>Что делать:</b>
 <ol style="margin:6px 0 0 18px;padding:0;">
