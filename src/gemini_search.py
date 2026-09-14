@@ -3,7 +3,7 @@
 Только стандартная библиотека (urllib) — requirements не расширяяем!
 Нужен GEMINI_API_KEY в секретах. Без ключа/при ошибке — тихо [], бот работает штатно.
 ВАЖНО: берём URL только из реальных результатов поиска (groundingChunks)."""
-import os, re, json, urllib.request, urllib.parse
+import os, re, json, time, urllib.request, urllib.parse
 
 NEWS_OK = re.compile(r"(ynet|walla|israelhayom|מעריב|maariv|ice\.co\.il|kipa|nws\.report|gov\.il|news\.co\.il|13tv|now14|kan|1news|mako|calcalist|globes|jdn|srugy|bhol|0404|israelnationalnews|lada\.net|cursorinfo|vesty)", re.I)
 BAD = re.compile(r"(google\.|youtube|facebook|twitter|x\.com|t\.me|instagram|tiktok|wikipedia)", re.I)
@@ -40,13 +40,19 @@ def search_urls(query: str, timeout: int = 45) -> list:
             continue
     return []
 
-def resolve_article(he_title: str) -> str:
-    """Прямой URL новости по иврит-заголовку. Пустая строка, если не нашли."""
+def resolve_article(he_title: str, timeout: int = 30) -> str:
+    """Прямой URL новости по иврит-заголовку. Несколько вариантов запроса."""
     if not he_title:
         return ""
-    urls = search_urls(f"ריקול החזרה יזומה {he_title}")
-    good = [u for u in urls if NEWS_OK.search(u) and not BAD.search(u)]
-    if good:
-        return good[0]
-    neutral = [u for u in urls if not BAD.search(u)]
+    t = re.sub(r"\s*-\s*ynet\.co\.il\s*$", "", he_title).strip()
+    variants = [f"ריקול החזרה יזומה {t}", f'"{t}"', f"ריקול {t}"]
+    neutral = []
+    for i, q in enumerate(variants):
+        urls = search_urls(q, timeout=timeout)
+        good = [u for u in urls if NEWS_OK.search(u) and not BAD.search(u)]
+        if good:
+            return good[0]
+        neutral += [u for u in urls if not BAD.search(u)]
+        if i < len(variants) - 1:
+            time.sleep(2)
     return neutral[0] if neutral else ""

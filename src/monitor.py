@@ -62,30 +62,43 @@ def main():
         return 2
 
     cards = []
+    traces = []
     for it in new:
         c = translate.build_card(it)
+        tr = {"he_title": c["he_title"][:80], "resolved_by": None, "article_chars": 0, "fields": []}
+        # --- раскрытие ссылки: CSE -> Gemini -> пул прямых из лент; результат идёт В ПОСТ ---
         if "news.google.com" in c["url"]:
             direct = cse.resolve(c["he_title"])
+            if direct:
+                tr["resolved_by"] = "cse"
+            if not direct:
+                direct = gemini_search.resolve_article(c["he_title"])
+                if direct:
+                    tr["resolved_by"] = "gemini"
             if direct:
                 c["url"] = direct
                 c["source"] = "прямая ссылка"
                 c["source_ru"] = "оригинал объявления"
-            tok = norm(c["he_title"])
-            match = max(direct_pool, key=lambda d: len(tok & norm(d["he_title"])), default=None)
-            if match and match is not None and len(tok & norm(match["he_title"])) >= 2:
-                c["url"] = match["url"]
-                c["source"] = match["source"]
-                c["source_ru"] = translate.src_ru(match["source"])
+            else:
+                tok = norm(c["he_title"])
+                match = max(direct_pool, key=lambda d: len(tok & norm(d["he_title"])), default=None)
+                if match is not None and len(tok & norm(match["he_title"])) >= 2:
+                    c["url"] = match["url"]
+                    c["source"] = match["source"]
+                    c["source_ru"] = translate.src_ru(match["source"])
+                    tr["resolved_by"] = "pool"
+        tr["final_url"] = c["url"][:110]
         e = enrich(c["url"])
         c.update(photo_url=e["photo_url"], batches=e["batches"][:6], dates=e["dates"], barcodes=e.get("barcodes", []), maker=e.get("maker"))
-        # --- схематичный разбор статьи (всегда, даже без ключей CSE) ---
-        read_url = c["url"]
-        if "news.google.com" in read_url:
-            read_url = cse.resolve(c["he_title"]) or gemini_search.resolve_article(c["he_title"]) or ""
-        if read_url:
-            _, text = read_via_jina(read_url)
-            if text:
-                d = analyze(strip_md(text))
+        # --- схематичный разбор статьи (если ссылка прямая) ---
+        text = None
+        if "news.google.com" not in c["url"]:
+            _, text = read_via_jina(c["url"])
+        if text:
+            tr["article_chars"] = len(text)
+            d = analyze(strip_md(text))
+            tr["fields"] = sorted(d.keys())
+            if True:
                 if d.get("reason_ru") and not c["guessed"]:
                     c["reason_ru"] = d["reason_ru"]; c["guessed"] = True
                 if d.get("category_ru") and (c["category_ru"] == "не определена"):
@@ -98,7 +111,7 @@ def main():
                     c["maker"] = d["maker"]
                 if d.get("brand") and c["brands"] in (None, "—"):
                     c["brands"] = d["brand"]
-                if d.get("product") and c["product"] == "— (в заголовке не назван)":
+                if d.get("product") and c["product"] in ("—", ""):
                     c["product"] = d["product"]
                     c["title_ru"] = f"Изъятие: {d['product']} — {c['reason_ru']}" if c.get("reason_ru") else c["title_ru"]
         cards.append(c)
@@ -123,6 +136,14 @@ def main():
         all_cards.append(c)
     sitegen.generate(all_cards, site)
     storage.save(db)
+    try:
+        import json as _json
+        _json.dump({"run_at": time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime()),
+                    "new_items": len(cards), "traces": traces},
+                   open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "last_run.json"), "w"),
+                   ensure_ascii=False, indent=1)
+    except Exception as _e:
+        print("диагностику не записал:", _e)
     print(f"опубликовано: {sum(1 for c in cards if db['items'].get(c['id'], {}).get('sent'))}; всего в базе: {len(db['items'])}")
     heartbeat(hc)
 
