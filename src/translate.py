@@ -51,7 +51,7 @@ GENERIC_REASON = "смотрите оригинал объявления (тип
 
 def build_card(item: dict) -> dict:
     p = parse(item["he_title"], item["source"])
-    _HE = ("ynet", "walla", "israelhayom", "kipa", "gov.il", "maariv", "ice.co.il", "emess")
+    _HE = ("ynet", "walla", "israelhayom", "kipa", "gov.il", "maariv", "ice.co.il", "emess", "nws.report")
     orig_lang = "иврит" if any(s in (item.get("url", "") + item.get("source", "")).lower() for s in _HE) else "русский"
 
     # --- базовый разбор заголовка ---

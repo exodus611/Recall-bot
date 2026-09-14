@@ -1,0 +1,24 @@
+name: Опубликовать карточку
+on:
+  workflow_dispatch:
+    inputs:
+      find:
+        description: "Что искать (часть названия, напр. кукуруза)"
+        required: false
+        default: "кукуруза"
+permissions:
+  contents: read
+jobs:
+  repost:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Публикация в канал
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: python src/repost.py --find "${{ github.event.inputs.find }}"
